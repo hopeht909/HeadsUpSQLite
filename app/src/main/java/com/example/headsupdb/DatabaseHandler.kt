@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper
 class DatabaseHandler(context: Context): SQLiteOpenHelper(context, "celebrities", null, 1) {
     var sqlDb: SQLiteDatabase = writableDatabase
 
+
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL("create table celebrities (_id integer primary key autoincrement, Name text, Taboo1 text, Taboo2 text, Taboo3 text)")
     }
@@ -59,5 +60,26 @@ class DatabaseHandler(context: Context): SQLiteOpenHelper(context, "celebrities"
         }
 
         return celebrities
+    }
+    fun updateCelebrity(celebrity: Celebrity): Int {
+        val contentValues = ContentValues()
+        contentValues.put("Name", celebrity.name)
+        contentValues.put("Taboo1", celebrity.taboo1)
+        contentValues.put("Taboo2", celebrity.taboo2)
+        contentValues.put("Taboo3", celebrity.taboo3)
+
+        val success = sqlDb.update("celebrities", contentValues, "_id = ${celebrity.id}", null)
+
+        sqlDb.close()
+        return success
+    }
+
+    fun deleteCelebrity(celebrity: Celebrity): Int{
+        val contentValues = ContentValues()
+        contentValues.put("_id", celebrity.id)
+        val success = sqlDb.delete("celebrities", "_id = ${celebrity.id}", null)
+        sqlDb.close()
+        return success
+//        success > 0 means it worked
     }
 }
